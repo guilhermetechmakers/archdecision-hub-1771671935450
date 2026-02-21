@@ -107,6 +107,11 @@ export function DecisionDetailPage() {
               recommendedOption={recommendedOption}
               designerName={decision.createdBy.name}
               allOptions={decision.options}
+              onAddRecommendation={() => {
+                toast.info('Add recommendation', {
+                  description: 'Open the comparison panel to mark an option as recommended.',
+                })
+              }}
             />
             <ClientActions
               decision={decision}
