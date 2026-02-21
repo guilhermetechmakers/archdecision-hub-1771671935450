@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useRef } from 'react'
+import { type ReactNode, useEffect, useId, useRef } from 'react'
 import { cn } from '@/lib/utils'
 import { X } from 'lucide-react'
 
@@ -13,6 +13,9 @@ interface DialogProps {
 
 export function Dialog({ isOpen, onClose, title, description, children, className }: DialogProps) {
   const overlayRef = useRef<HTMLDivElement>(null)
+  const id = useId()
+  const titleId = `${id}-title`
+  const descriptionId = `${id}-description`
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -34,10 +37,15 @@ export function Dialog({ isOpen, onClose, title, description, children, classNam
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
         ref={overlayRef}
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm animate-fade-in"
+        className="fixed inset-0 bg-foreground/50 backdrop-blur-sm animate-fade-in"
         onClick={onClose}
+        aria-hidden="true"
       />
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={title ? titleId : undefined}
+        aria-describedby={description ? descriptionId : undefined}
         className={cn(
           'relative z-50 w-full max-w-lg rounded-lg bg-card p-6 shadow-elevated animate-scale-in',
           className
@@ -52,8 +60,8 @@ export function Dialog({ isOpen, onClose, title, description, children, classNam
         </button>
         {title && (
           <div className="mb-4">
-            <h2 className="text-lg font-semibold">{title}</h2>
-            {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
+            <h2 id={titleId} className="text-lg font-semibold">{title}</h2>
+            {description && <p id={descriptionId} className="mt-1 text-sm text-muted-foreground">{description}</p>}
           </div>
         )}
         {children}
