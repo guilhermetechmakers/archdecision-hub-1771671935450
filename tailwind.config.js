@@ -44,8 +44,21 @@ export default {
           DEFAULT: 'rgb(var(--sidebar) / <alpha-value>)',
           foreground: 'rgb(var(--sidebar-foreground) / <alpha-value>)',
         },
-        success: 'rgb(var(--success) / <alpha-value>)',
-        warning: 'rgb(var(--warning) / <alpha-value>)',
+        success: {
+          DEFAULT: 'rgb(var(--success) / <alpha-value>)',
+          foreground: 'rgb(var(--success-foreground) / <alpha-value>)',
+          muted: 'rgb(var(--success-muted) / <alpha-value>)',
+        },
+        warning: {
+          DEFAULT: 'rgb(var(--warning) / <alpha-value>)',
+          foreground: 'rgb(var(--warning-foreground) / <alpha-value>)',
+          muted: 'rgb(var(--warning-muted) / <alpha-value>)',
+        },
+        info: {
+          DEFAULT: 'rgb(var(--info) / <alpha-value>)',
+          foreground: 'rgb(var(--info-foreground) / <alpha-value>)',
+          muted: 'rgb(var(--info-muted) / <alpha-value>)',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

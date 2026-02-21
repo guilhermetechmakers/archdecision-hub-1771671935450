@@ -26,7 +26,14 @@
     --sidebar: 245 246 248;
     --sidebar-foreground: 17 17 17;
     --success: 52 211 153;
+    --success-foreground: 4 120 87;
+    --success-muted: 209 250 229;
     --warning: 251 191 36;
+    --warning-foreground: 180 83 9;
+    --warning-muted: 254 243 199;
+    --info: 59 130 246;
+    --info-foreground: 37 99 235;
+    --info-muted: 219 234 254;
     --radius: 0.5rem;
   }
 

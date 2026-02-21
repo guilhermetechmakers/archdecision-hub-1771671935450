@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { EmptyState } from '@/components/ui/empty-state'
 import { decisions, projects, meetings } from '@/data/mock-data'
 import { formatDate } from '@/lib/utils'
 import {
   ClipboardCheck, Calendar, ArrowRight, CheckCircle, Clock,
-  FileText, Bell,
+  FileText, Bell, PartyPopper,
 } from 'lucide-react'
 
 export function ClientPortalPage() {
@@ -23,9 +24,9 @@ export function ClientPortalPage() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Card className="border-amber-200 bg-amber-50/50">
+        <Card className="border-warning/30 bg-warning-muted/50">
           <CardContent className="flex items-center gap-4 p-5">
-            <div className="rounded-lg bg-amber-100 p-2.5 text-amber-600">
+            <div className="rounded-lg bg-warning-muted p-2.5 text-warning-foreground">
               <Clock className="h-5 w-5" />
             </div>
             <div>
@@ -34,9 +35,9 @@ export function ClientPortalPage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="border-emerald-200 bg-emerald-50/50">
+        <Card className="border-success/30 bg-success-muted/50">
           <CardContent className="flex items-center gap-4 p-5">
-            <div className="rounded-lg bg-emerald-100 p-2.5 text-emerald-600">
+            <div className="rounded-lg bg-success-muted p-2.5 text-success-foreground">
               <CheckCircle className="h-5 w-5" />
             </div>
             <div>
@@ -45,9 +46,9 @@ export function ClientPortalPage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="border-blue-200 bg-blue-50/50">
+        <Card className="border-info/30 bg-info-muted/50">
           <CardContent className="flex items-center gap-4 p-5">
-            <div className="rounded-lg bg-blue-100 p-2.5 text-blue-600">
+            <div className="rounded-lg bg-info-muted p-2.5 text-info-foreground">
               <Calendar className="h-5 w-5" />
             </div>
             <div>
@@ -59,19 +60,19 @@ export function ClientPortalPage() {
       </div>
 
       {/* Pending Decisions */}
-      {pendingDecisions.length > 0 && (
-        <div>
-          <h2 className="mb-4 text-lg font-semibold flex items-center gap-2">
-            <Bell className="h-5 w-5 text-amber-500" /> Awaiting Your Approval
-          </h2>
-          <div className="space-y-3">
+      <div>
+        <h2 className="mb-4 text-lg font-semibold flex items-center gap-2">
+          <Bell className="h-5 w-5 text-warning-foreground" /> Awaiting Your Approval
+        </h2>
+        {pendingDecisions.length > 0 ? (
+          <div className="space-y-3 animate-stagger">
             {pendingDecisions.map((decision) => {
               const project = projects.find((p) => p.id === decision.projectId)
               return (
                 <Card key={decision.id} className="group hover:border-primary/20 transition-all">
                   <CardContent className="p-5">
-                    <div className="flex items-start gap-4">
-                      <div className="rounded-lg bg-amber-100 p-2.5 text-amber-600 shrink-0">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                      <div className="rounded-lg bg-warning-muted p-2.5 text-warning-foreground shrink-0">
                         <ClipboardCheck className="h-5 w-5" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -80,7 +81,7 @@ export function ClientPortalPage() {
                         <p className="mt-1 text-sm text-muted-foreground line-clamp-1">{decision.description}</p>
                         <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
                           <span>{decision.options.length} options</span>
-                          {decision.dueDate && <span className="text-amber-600 font-medium">Due {formatDate(decision.dueDate)}</span>}
+                          {decision.dueDate && <span className="text-warning-foreground font-medium">Due {formatDate(decision.dueDate)}</span>}
                         </div>
                       </div>
                       <Link to={`/dashboard/projects/${decision.projectId}/decisions/${decision.id}`}>
@@ -94,8 +95,19 @@ export function ClientPortalPage() {
               )
             })}
           </div>
-        </div>
-      )}
+        ) : (
+          <Card>
+            <CardContent className="p-0">
+              <EmptyState
+                icon={<PartyPopper className="h-6 w-6" />}
+                title="You're all caught up!"
+                description="There are no pending decisions awaiting your approval right now. We'll notify you when something needs your attention."
+                className="py-12"
+              />
+            </CardContent>
+          </Card>
+        )}
+      </div>
 
       {/* Weekly Update */}
       <Card>
@@ -106,21 +118,21 @@ export function ClientPortalPage() {
           <div className="rounded-lg bg-muted/50 p-4">
             <h4 className="font-medium mb-2">What happened this week</h4>
             <ul className="space-y-1.5 text-sm text-muted-foreground">
-              <li className="flex items-start gap-2"><CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" /> HVAC System Type decision approved</li>
-              <li className="flex items-start gap-2"><FileText className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" /> Floor plans updated to version 5</li>
+              <li className="flex items-start gap-2"><CheckCircle className="h-4 w-4 text-success-foreground mt-0.5 shrink-0" /> HVAC System Type decision approved</li>
+              <li className="flex items-start gap-2"><FileText className="h-4 w-4 text-info-foreground mt-0.5 shrink-0" /> Floor plans updated to version 5</li>
               <li className="flex items-start gap-2"><Calendar className="h-4 w-4 text-purple-500 mt-0.5 shrink-0" /> Weekly sync completed with 3 action items</li>
             </ul>
           </div>
           <div className="rounded-lg bg-muted/50 p-4">
             <h4 className="font-medium mb-2">What's coming next</h4>
             <ul className="space-y-1.5 text-sm text-muted-foreground">
-              <li className="flex items-start gap-2"><Clock className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" /> Cladding material decision review meeting (Feb 24)</li>
-              <li className="flex items-start gap-2"><ClipboardCheck className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" /> Gallery lighting design decision coming soon</li>
+              <li className="flex items-start gap-2"><Clock className="h-4 w-4 text-warning-foreground mt-0.5 shrink-0" /> Cladding material decision review meeting (Feb 24)</li>
+              <li className="flex items-start gap-2"><ClipboardCheck className="h-4 w-4 text-warning-foreground mt-0.5 shrink-0" /> Gallery lighting design decision coming soon</li>
             </ul>
           </div>
-          <div className="rounded-lg bg-amber-50 border border-amber-200 p-4">
-            <h4 className="font-medium text-amber-800 mb-2">What we need from you</h4>
-            <ul className="space-y-1.5 text-sm text-amber-700">
+          <div className="rounded-lg bg-warning-muted/50 border border-warning/30 p-4">
+            <h4 className="font-medium text-warning-foreground mb-2">What we need from you</h4>
+            <ul className="space-y-1.5 text-sm text-warning-foreground/80">
               <li>Review and approve the Exterior Cladding Material Selection</li>
               <li>Confirm attendance for the Feb 24 design review meeting</li>
             </ul>
