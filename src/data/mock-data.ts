@@ -1,6 +1,6 @@
 import type {
   User, Project, Decision, ProjectFile, MessageThread, Meeting, Task,
-  Template, KpiMetric, ActivityItem, Notification,
+  Template, KpiMetric, ActivityItem, Notification, AuditEntry, VersionSnapshot, ESignature,
 } from '@/types'
 
 export const currentUser: User = {
@@ -128,8 +128,10 @@ export const decisions: Decision[] = [
     dueDate: '2026-03-01',
     version: 3,
     comments: [
-      { id: 'c1', userId: 'u4', userName: 'James Park', content: 'The weathering steel option aligns well with our vision for the building. Can we see precedent images?', createdAt: '2026-02-12T09:00:00Z' },
-      { id: 'c2', userId: 'u2', userName: 'Marcus Rivera', content: 'Absolutely. I\'ll prepare a precedent study with similar projects in the Pacific Northwest.', createdAt: '2026-02-12T11:30:00Z' },
+      { id: 'c1', userId: 'u4', userName: 'James Park', userRole: 'client', content: 'The weathering steel option aligns well with our vision for the building. Can we see precedent images?', createdAt: '2026-02-12T09:00:00Z' },
+      { id: 'c2', userId: 'u2', userName: 'Marcus Rivera', userRole: 'designer', content: 'Absolutely. I\'ll prepare a precedent study with similar projects in the Pacific Northwest.', createdAt: '2026-02-12T11:30:00Z' },
+      { id: 'c3', userId: 'u1', userName: 'Sarah Chen', userRole: 'project-manager', content: '@James Park I\'ve attached the precedent study below. The Corten steel ages beautifully in our climate — see the Portland Art Museum annex for reference.', createdAt: '2026-02-14T10:15:00Z', mentions: ['James Park'], attachments: [{ name: 'Precedent-Study-Corten.pdf', url: '#', type: 'pdf' }] },
+      { id: 'c4', userId: 'u4', userName: 'James Park', userRole: 'client', content: 'This looks excellent. I\'m leaning toward the weathering steel. Let\'s discuss the staining mitigation in our next meeting.', createdAt: '2026-02-15T14:00:00Z' },
     ],
   },
   {
@@ -425,6 +427,42 @@ export const notifications: Notification[] = [
   { id: 'n3', title: 'RFI Due Today', message: 'RFI #12 - Foundation Detail Response is due today', type: 'error', read: false, createdAt: '2026-02-20T08:00:00Z', link: '/dashboard/projects/p3/tasks/t3' },
   { id: 'n4', title: 'Decision Approved', message: 'HVAC System Type has been approved', type: 'success', read: true, createdAt: '2026-02-19T16:30:00Z', link: '/dashboard/projects/p1/decisions/d2' },
 ]
+
+export const auditEntries: Record<string, AuditEntry[]> = {
+  d1: [
+    { id: 'ae1', action: 'created', actor: users[1]!, timestamp: '2026-01-15T10:30:00Z', ip: '192.168.1.42', details: 'Decision created with 2 initial options' },
+    { id: 'ae2', action: 'option_added', actor: users[1]!, timestamp: '2026-01-20T09:00:00Z', ip: '192.168.1.42', details: 'Added option: Terracotta Baguettes' },
+    { id: 'ae3', action: 'version_created', actor: users[1]!, timestamp: '2026-01-25T14:00:00Z', ip: '192.168.1.42', details: 'Version 2 created with updated cost estimates' },
+    { id: 'ae4', action: 'published', actor: users[0]!, timestamp: '2026-02-01T11:00:00Z', ip: '10.0.0.15', details: 'Decision published for client review' },
+    { id: 'ae5', action: 'commented', actor: users[3]!, timestamp: '2026-02-12T09:00:00Z', ip: '203.45.67.89', details: 'Client commented requesting precedent images' },
+    { id: 'ae6', action: 'version_created', actor: users[1]!, timestamp: '2026-02-10T14:20:00Z', ip: '192.168.1.42', details: 'Version 3 created with precedent study attached' },
+    { id: 'ae7', action: 'updated', actor: users[0]!, timestamp: '2026-02-15T16:00:00Z', ip: '10.0.0.15', details: 'Status changed to pending approval' },
+  ],
+  d2: [
+    { id: 'ae8', action: 'created', actor: users[2]!, timestamp: '2025-12-01T08:00:00Z', ip: '192.168.1.55', details: 'Decision created with 2 options' },
+    { id: 'ae9', action: 'published', actor: users[0]!, timestamp: '2025-12-15T10:00:00Z', ip: '10.0.0.15', details: 'Decision published for client review' },
+    { id: 'ae10', action: 'approved', actor: users[3]!, timestamp: '2026-01-20T16:45:00Z', ip: '203.45.67.89', details: 'Client approved VRF system option' },
+    { id: 'ae11', action: 'signed', actor: users[3]!, timestamp: '2026-01-20T16:46:00Z', ip: '203.45.67.89', details: 'E-signature captured for approval', metadata: { hash: 'sha256:a1b2c3d4e5f6' } },
+  ],
+}
+
+export const versionSnapshots: Record<string, VersionSnapshot[]> = {
+  d1: [
+    { id: 'vs1', version: 1, createdAt: '2026-01-15T10:30:00Z', createdBy: users[1]!, changesSummary: 'Initial decision with Weathering Steel and Fiber Cement options', optionCount: 2, status: 'draft' },
+    { id: 'vs2', version: 2, createdAt: '2026-01-25T14:00:00Z', createdBy: users[1]!, changesSummary: 'Added Terracotta Baguettes option; updated cost estimates for all options', optionCount: 3, status: 'draft' },
+    { id: 'vs3', version: 3, createdAt: '2026-02-10T14:20:00Z', createdBy: users[1]!, changesSummary: 'Attached precedent study; refined pros/cons based on climate analysis', optionCount: 3, status: 'pending', pdfUrl: '#' },
+  ],
+  d2: [
+    { id: 'vs4', version: 1, createdAt: '2025-12-01T08:00:00Z', createdBy: users[2]!, changesSummary: 'Initial decision with VRF and Chilled Beam options', optionCount: 2, status: 'draft' },
+    { id: 'vs5', version: 2, createdAt: '2026-01-10T11:00:00Z', createdBy: users[2]!, changesSummary: 'Updated energy modeling data and maintenance cost projections', optionCount: 2, status: 'approved', pdfUrl: '#' },
+  ],
+}
+
+export const eSignatures: Record<string, ESignature[]> = {
+  d2: [
+    { id: 'es1', signerName: 'James Park', signerEmail: 'james@client.com', signedAt: '2026-01-20T16:46:00Z', ip: '203.45.67.89', decisionId: 'd2', optionId: 'do4', hash: 'sha256:a1b2c3d4e5f67890abcdef1234567890' },
+  ],
+}
 
 export const phaseLabels: Record<string, string> = {
   'kickoff': 'Kickoff',

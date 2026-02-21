@@ -69,6 +69,7 @@ export const router = createBrowserRouter([
       { path: 'projects/:projectId/decisions/:decisionId', element: <DecisionDetailPage /> },
       { path: 'projects/:projectId/archive', element: <ProjectArchivePage /> },
       { path: 'decisions', element: <DecisionLogPage /> },
+      { path: 'decisions/:decisionId', element: <DecisionDetailPage /> },
       { path: 'files', element: <FilesPage /> },
       { path: 'messages', element: <MessagesPage /> },
       { path: 'meetings', element: <MeetingsPage /> },
@@ -90,8 +91,19 @@ export const router = createBrowserRouter([
       { path: '/client', element: <ClientPortalPage /> },
       { path: '/client/messages', element: <ClientMessagesPage /> },
       { path: '/client/meetings', element: <ClientMeetingsPage /> },
+      { path: '/client/decisions/:decisionId', element: <DecisionDetailPage /> },
       { path: '/client/downloads', element: <ClientDownloadsPage /> },
       { path: '/client/profile', element: <ClientProfilePage /> },
+    ],
+  },
+
+  // Standalone decision detail route
+  {
+    path: '/decision-detail',
+    element: <DashboardLayout />,
+    children: [
+      { index: true, element: <DecisionDetailPage /> },
+      { path: ':decisionId', element: <DecisionDetailPage /> },
     ],
   },
 

@@ -62,9 +62,45 @@ export interface Comment {
   id: string
   userId: string
   userName: string
+  userRole: UserRole
   userAvatar?: string
   content: string
   createdAt: string
+  attachments?: { name: string; url: string; type: string }[]
+  mentions?: string[]
+}
+
+export interface AuditEntry {
+  id: string
+  action: 'created' | 'updated' | 'published' | 'approved' | 'rejected' | 'signed' | 'commented' | 'version_created' | 'option_added' | 'escalated'
+  actor: User
+  timestamp: string
+  ip?: string
+  details?: string
+  metadata?: Record<string, string>
+}
+
+export interface VersionSnapshot {
+  id: string
+  version: number
+  createdAt: string
+  createdBy: User
+  changesSummary: string
+  optionCount: number
+  status: DecisionStatus
+  pdfUrl?: string
+}
+
+export interface ESignature {
+  id: string
+  signerName: string
+  signerEmail: string
+  signedAt: string
+  ip: string
+  signatureDataUrl?: string
+  decisionId: string
+  optionId: string
+  hash: string
 }
 
 export interface ProjectFile {
