@@ -19,11 +19,11 @@ export function VersionHistory({ versions, currentVersion }: VersionHistoryProps
   const sortedVersions = [...versions].sort((a, b) => b.version - a.version)
 
   return (
-    <Card>
+    <Card className="rounded-lg shadow-card" role="region" aria-label="Version history">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between">
           <span className="flex items-center gap-2 text-base">
-            <History className="h-4 w-4" />
+            <History className="h-4 w-4" aria-hidden="true" />
             Version History
           </span>
           <Badge variant="info" className="text-xs">
@@ -90,12 +90,22 @@ export function VersionHistory({ versions, currentVersion }: VersionHistoryProps
                     </div>
 
                     <div className="flex gap-2 mt-2">
-                      <Button variant="ghost" size="sm" className="h-7 text-xs gap-1 text-muted-foreground">
-                        <Eye className="h-3 w-3" /> View
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 text-xs gap-1 text-muted-foreground"
+                        aria-label={`View version ${snapshot.version}`}
+                      >
+                        <Eye className="h-3 w-3" aria-hidden="true" /> View
                       </Button>
                       {snapshot.pdfUrl && (
-                        <Button variant="ghost" size="sm" className="h-7 text-xs gap-1 text-muted-foreground">
-                          <Download className="h-3 w-3" /> PDF
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 text-xs gap-1 text-muted-foreground"
+                          aria-label={`Download PDF for version ${snapshot.version}`}
+                        >
+                          <Download className="h-3 w-3" aria-hidden="true" /> PDF
                         </Button>
                       )}
                     </div>

@@ -113,10 +113,10 @@ export function ClientActions({ decision, selectedOptionId, selectedOption }: Cl
 
   if (isApproved) {
     return (
-      <Card className="border-emerald-200 bg-emerald-50/50">
+      <Card className="rounded-lg shadow-card border-emerald-200 bg-emerald-50/50" role="status" aria-label="Decision approved">
         <CardContent className="p-5 flex items-center gap-3">
           <div className="rounded-full bg-emerald-100 p-2">
-            <Check className="h-5 w-5 text-emerald-600" />
+            <Check className="h-5 w-5 text-emerald-600" aria-hidden="true" />
           </div>
           <div>
             <h3 className="font-semibold text-emerald-800">Decision Approved</h3>
@@ -133,9 +133,9 @@ export function ClientActions({ decision, selectedOptionId, selectedOption }: Cl
 
   if (!isPending) {
     return (
-      <Card className="border-dashed">
+      <Card className="rounded-lg shadow-card border-dashed" role="status" aria-label={`Decision status: ${decision.status}`}>
         <CardContent className="p-5 flex items-center gap-3 text-muted-foreground">
-          <AlertTriangle className="h-5 w-5" />
+          <AlertTriangle className="h-5 w-5" aria-hidden="true" />
           <p className="text-sm">
             This decision is currently in <span className="font-medium">{decision.status}</span> status.
             Client actions are available when the decision is pending approval.
@@ -147,10 +147,10 @@ export function ClientActions({ decision, selectedOptionId, selectedOption }: Cl
 
   return (
     <>
-      <Card>
+      <Card className="rounded-lg shadow-card" role="region" aria-label="Client actions">
         <CardContent className="p-5 space-y-4">
           <div className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-primary" />
+            <Shield className="h-5 w-5 text-primary" aria-hidden="true" />
             <h3 className="font-semibold">Client Actions</h3>
           </div>
           <p className="text-sm text-muted-foreground">
@@ -165,22 +165,25 @@ export function ClientActions({ decision, selectedOptionId, selectedOption }: Cl
               className="gap-2 h-11"
               onClick={handleApprove}
               disabled={!selectedOptionId}
+              aria-label={selectedOptionId ? `Approve and sign ${selectedOption?.title}` : 'Select an option before approving'}
             >
-              <Check className="h-4 w-4" /> Approve & Sign
+              <Check className="h-4 w-4" aria-hidden="true" /> Approve & Sign
             </Button>
             <Button
               variant="outline"
               className="gap-2 h-11"
               onClick={() => setIsChangesDialogOpen(true)}
+              aria-label="Request changes to this decision"
             >
-              <X className="h-4 w-4" /> Request Changes
+              <X className="h-4 w-4" aria-hidden="true" /> Request Changes
             </Button>
             <Button
               variant="ghost"
               className="gap-2 h-11"
               onClick={() => setIsQuestionDialogOpen(true)}
+              aria-label="Ask a question about this decision"
             >
-              <MessageSquare className="h-4 w-4" /> Ask Question
+              <MessageSquare className="h-4 w-4" aria-hidden="true" /> Ask Question
             </Button>
           </div>
         </CardContent>
@@ -213,11 +216,13 @@ export function ClientActions({ decision, selectedOptionId, selectedOption }: Cl
                 ref={canvasRef}
                 width={380}
                 height={120}
-                className="w-full cursor-crosshair"
+                className="w-full cursor-crosshair rounded-lg"
                 onMouseDown={startDrawing}
                 onMouseMove={draw}
                 onMouseUp={stopDrawing}
                 onMouseLeave={stopDrawing}
+                aria-label="Signature drawing area"
+                role="img"
               />
               {!hasSignature && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -229,8 +234,10 @@ export function ClientActions({ decision, selectedOptionId, selectedOption }: Cl
             </div>
             {hasSignature && (
               <button
+                type="button"
                 onClick={clearSignature}
                 className="text-xs text-muted-foreground hover:text-foreground mt-1 transition-colors"
+                aria-label="Clear drawn signature"
               >
                 Clear signature
               </button>

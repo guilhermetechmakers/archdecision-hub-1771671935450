@@ -22,10 +22,10 @@ export function RecommendationCard({
 }: RecommendationCardProps) {
   if (!recommendedOption) {
     return (
-      <Card className={cn('border-dashed border-2 border-border', className)}>
+      <Card className={cn('rounded-lg shadow-card border-dashed border-2 border-border', className)} role="region" aria-label="Designer recommendation">
         <CardContent className="flex flex-col items-center justify-center p-6 py-12 text-center">
           <div className="mb-4 rounded-full bg-warning/10 p-3">
-            <Lightbulb className="h-6 w-6 text-warning" />
+            <Lightbulb className="h-6 w-6 text-warning" aria-hidden="true" />
           </div>
           <h3 className="font-semibold text-foreground">No Recommendation Yet</h3>
           <p className="mt-1.5 max-w-xs text-sm text-muted-foreground">
@@ -36,8 +36,9 @@ export function RecommendationCard({
               size="sm"
               className="mt-5 gap-2"
               onClick={onAddRecommendation}
+              aria-label="Add a designer recommendation"
             >
-              <PlusCircle className="h-4 w-4" />
+              <PlusCircle className="h-4 w-4" aria-hidden="true" />
               Add Recommendation
             </Button>
           )}
@@ -57,9 +58,11 @@ export function RecommendationCard({
   return (
     <Card
       className={cn(
-        'overflow-hidden border-warning/30 bg-gradient-to-br from-warning/5 to-card',
+        'rounded-lg shadow-card overflow-hidden border-warning/30 bg-gradient-to-br from-warning/5 to-card',
         className,
       )}
+      role="region"
+      aria-label="Designer recommendation"
     >
       <CardContent className="space-y-4 p-6">
         <div className="flex items-start justify-between gap-4">

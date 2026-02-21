@@ -42,11 +42,11 @@ export function AuditTrail({ entries }: AuditTrailProps) {
   }
 
   return (
-    <Card>
+    <Card className="rounded-lg shadow-card" role="region" aria-label="Audit trail">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between">
           <span className="flex items-center gap-2 text-base">
-            <Shield className="h-4 w-4" />
+            <Shield className="h-4 w-4" aria-hidden="true" />
             Audit Trail
           </span>
           <Button
@@ -54,8 +54,9 @@ export function AuditTrail({ entries }: AuditTrailProps) {
             size="sm"
             className="h-7 text-xs gap-1 text-muted-foreground"
             onClick={handleExport}
+            aria-label="Export audit trail as PDF"
           >
-            <Download className="h-3 w-3" /> Export
+            <Download className="h-3 w-3" aria-hidden="true" /> Export
           </Button>
         </CardTitle>
       </CardHeader>
@@ -111,13 +112,16 @@ export function AuditTrail({ entries }: AuditTrailProps) {
 
             {sortedEntries.length > 5 && (
               <button
+                type="button"
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors mt-3 font-medium"
+                aria-expanded={isExpanded}
+                aria-label={isExpanded ? 'Show fewer audit entries' : `Show all ${sortedEntries.length} audit entries`}
               >
                 {isExpanded ? (
-                  <><ChevronUp className="h-3 w-3" /> Show less</>
+                  <><ChevronUp className="h-3 w-3" aria-hidden="true" /> Show less</>
                 ) : (
-                  <><ChevronDown className="h-3 w-3" /> Show all {sortedEntries.length} entries</>
+                  <><ChevronDown className="h-3 w-3" aria-hidden="true" /> Show all {sortedEntries.length} entries</>
                 )}
               </button>
             )}

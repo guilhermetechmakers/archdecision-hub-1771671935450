@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabContent, useTabState } from '@/components/ui/tabs'
 import { DecisionHeader } from '@/components/decision-detail/DecisionHeader'
 import { ComparisonPanel } from '@/components/decision-detail/ComparisonPanel'
@@ -28,9 +30,31 @@ const tabs = [
   { id: 'audit', label: 'Audit Trail', icon: <Shield className="h-4 w-4" /> },
 ]
 
+function TabSkeleton({ rows = 3 }: { rows?: number }) {
+  return (
+    <Card className="rounded-lg shadow-card">
+      <CardHeader className="pb-3">
+        <Skeleton className="h-5 w-40" />
+      </CardHeader>
+      <CardContent className="space-y-4 pt-0">
+        {Array.from({ length: rows }).map((_, i) => (
+          <div key={i} className="flex gap-3">
+            <Skeleton className="h-8 w-8 rounded-full shrink-0" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-4 w-48" />
+              <Skeleton className="h-12 w-full rounded-lg" />
+            </div>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  )
+}
+
 export function DecisionDetailPage() {
   const { projectId, decisionId } = useParams()
   const [isLoading, setIsLoading] = useState(true)
+  const [isTabLoading, setIsTabLoading] = useState(false)
   const { activeTab, setActiveTab } = useTabState('overview')
 
   const decision = decisions.find((d) => d.id === decisionId) || decisions[0]!
@@ -45,9 +69,17 @@ export function DecisionDetailPage() {
   const selectedOptionData = decision.options.find((o) => o.id === selectedOption)
 
   useEffect(() => {
+    setIsLoading(true)
     const timer = setTimeout(() => setIsLoading(false), 600)
     return () => clearTimeout(timer)
   }, [decisionId])
+
+  const handleTabChange = useCallback((tabId: string) => {
+    setIsTabLoading(true)
+    setActiveTab(tabId)
+    const timer = setTimeout(() => setIsTabLoading(false), 300)
+    return () => clearTimeout(timer)
+  }, [setActiveTab])
 
   const handleExportPdf = () => {
     toast.success('PDF export started', {
@@ -74,78 +106,96 @@ export function DecisionDetailPage() {
 
   return (
     <div className="p-6 lg:p-8 space-y-6">
-      {/* Decision Header */}
       <DecisionHeader decision={decision} project={project} />
 
-      {/* Action Bar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-4">
-        <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} className="border-0" />
+        <Tabs tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} className="border-0" />
         <Button
           variant="outline"
           size="sm"
           className="gap-2 shrink-0 self-start"
           onClick={handleExportPdf}
+          aria-label="Export decision as PDF"
         >
-          <Download className="h-4 w-4" /> Export PDF
+          <Download className="h-4 w-4" aria-hidden="true" /> Export PDF
         </Button>
       </div>
 
-      {/* Tab Content */}
       {activeTab === 'overview' && (
         <TabContent className="space-y-6">
-          {/* Comparison Panel */}
-          <ComparisonPanel
-            options={decision.options}
-            selectedOptionId={selectedOption}
-            onSelectOption={setSelectedOption}
-            isReadOnly={decision.status === 'approved' || decision.status === 'archived'}
-          />
-
-          {/* Recommendation + Client Actions Row */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <RecommendationCard
-              recommendedOption={recommendedOption}
-              designerName={decision.createdBy.name}
-              allOptions={decision.options}
-              onAddRecommendation={() => {
-                toast.info('Add recommendation', {
-                  description: 'Open the comparison panel to mark an option as recommended.',
-                })
-              }}
-            />
-            <ClientActions
-              decision={decision}
-              selectedOptionId={selectedOption}
-              selectedOption={selectedOptionData}
-            />
-          </div>
-
-          {/* Discussion Preview + Sidebar */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div className="lg:col-span-2">
-              <CommentThread
-                comments={decision.comments}
-                currentUserName={currentUser.name}
-              />
+          {isTabLoading ? (
+            <div className="space-y-6 animate-pulse-soft">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {[1, 2, 3].map((i) => (
+                  <Card key={i} className="rounded-lg shadow-card">
+                    <CardContent className="p-5 pt-7 space-y-4">
+                      <Skeleton className="h-36 w-full rounded-lg" />
+                      <Skeleton className="h-5 w-3/4" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-12 w-full rounded-lg" />
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
-            <div className="space-y-6">
-              <VersionHistory
-                versions={decisionVersions}
-                currentVersion={decision.version}
+          ) : (
+            <>
+              <ComparisonPanel
+                options={decision.options}
+                selectedOptionId={selectedOption}
+                onSelectOption={setSelectedOption}
+                isReadOnly={decision.status === 'approved' || decision.status === 'archived'}
               />
-              <AuditTrail entries={decisionAuditEntries} />
-            </div>
-          </div>
+
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <RecommendationCard
+                  recommendedOption={recommendedOption}
+                  designerName={decision.createdBy.name}
+                  allOptions={decision.options}
+                  onAddRecommendation={() => {
+                    toast.info('Add recommendation', {
+                      description: 'Open the comparison panel to mark an option as recommended.',
+                    })
+                  }}
+                />
+                <ClientActions
+                  decision={decision}
+                  selectedOptionId={selectedOption}
+                  selectedOption={selectedOptionData}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                <div className="lg:col-span-2">
+                  <CommentThread
+                    comments={decision.comments}
+                    currentUserName={currentUser.name}
+                  />
+                </div>
+                <div className="space-y-6">
+                  <VersionHistory
+                    versions={decisionVersions}
+                    currentVersion={decision.version}
+                  />
+                  <AuditTrail entries={decisionAuditEntries} />
+                </div>
+              </div>
+            </>
+          )}
         </TabContent>
       )}
 
       {activeTab === 'discussion' && (
         <TabContent>
           <div className="max-w-3xl">
-            <CommentThread
-              comments={decision.comments}
-              currentUserName={currentUser.name}
-            />
+            {isTabLoading ? (
+              <TabSkeleton rows={4} />
+            ) : (
+              <CommentThread
+                comments={decision.comments}
+                currentUserName={currentUser.name}
+              />
+            )}
           </div>
         </TabContent>
       )}
@@ -153,10 +203,14 @@ export function DecisionDetailPage() {
       {activeTab === 'versions' && (
         <TabContent>
           <div className="max-w-2xl">
-            <VersionHistory
-              versions={decisionVersions}
-              currentVersion={decision.version}
-            />
+            {isTabLoading ? (
+              <TabSkeleton rows={3} />
+            ) : (
+              <VersionHistory
+                versions={decisionVersions}
+                currentVersion={decision.version}
+              />
+            )}
           </div>
         </TabContent>
       )}
@@ -164,7 +218,11 @@ export function DecisionDetailPage() {
       {activeTab === 'audit' && (
         <TabContent>
           <div className="max-w-2xl">
-            <AuditTrail entries={decisionAuditEntries} />
+            {isTabLoading ? (
+              <TabSkeleton rows={5} />
+            ) : (
+              <AuditTrail entries={decisionAuditEntries} />
+            )}
           </div>
         </TabContent>
       )}

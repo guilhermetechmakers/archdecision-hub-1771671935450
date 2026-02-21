@@ -3,8 +3,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 
 export function DecisionDetailSkeleton() {
   return (
-    <div className="p-6 lg:p-8 space-y-6">
-      {/* Header skeleton */}
+    <div className="p-6 lg:p-8 space-y-6" role="status" aria-label="Loading decision details">
       <div className="space-y-4">
         <Skeleton className="h-4 w-32" />
         <div className="flex gap-2">
@@ -21,19 +20,17 @@ export function DecisionDetailSkeleton() {
         </div>
       </div>
 
-      {/* Action buttons skeleton */}
       <div className="flex gap-3">
-        <Skeleton className="h-10 w-36" />
-        <Skeleton className="h-10 w-36" />
-        <Skeleton className="h-10 w-28" />
+        <Skeleton className="h-10 w-36 rounded-lg" />
+        <Skeleton className="h-10 w-36 rounded-lg" />
+        <Skeleton className="h-10 w-28 rounded-lg" />
       </div>
 
-      {/* Comparison cards skeleton */}
       <div>
         <Skeleton className="h-6 w-48 mb-4" />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {[1, 2, 3].map((i) => (
-            <Card key={i}>
+            <Card key={i} className="rounded-lg shadow-card">
               <CardContent className="p-5 pt-7 space-y-4">
                 <Skeleton className="h-36 w-full rounded-lg" />
                 <Skeleton className="h-5 w-3/4" />
@@ -50,10 +47,9 @@ export function DecisionDetailSkeleton() {
         </div>
       </div>
 
-      {/* Bottom grid skeleton */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
-          <Card>
+          <Card className="rounded-lg shadow-card">
             <CardHeader>
               <Skeleton className="h-5 w-32" />
             </CardHeader>
@@ -71,7 +67,7 @@ export function DecisionDetailSkeleton() {
           </Card>
         </div>
         <div className="space-y-6">
-          <Card>
+          <Card className="rounded-lg shadow-card">
             <CardHeader>
               <Skeleton className="h-5 w-32" />
             </CardHeader>
@@ -89,6 +85,7 @@ export function DecisionDetailSkeleton() {
           </Card>
         </div>
       </div>
+      <span className="sr-only">Loading decision details, please wait...</span>
     </div>
   )
 }

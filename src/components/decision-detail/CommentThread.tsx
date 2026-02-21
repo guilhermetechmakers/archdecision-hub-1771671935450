@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Avatar } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { EmptyState } from '@/components/ui/empty-state'
 import { formatDate, cn } from '@/lib/utils'
 import type { Comment } from '@/types'
 import { toast } from 'sonner'
@@ -47,11 +46,11 @@ export function CommentThread({ comments, currentUserName }: CommentThreadProps)
   }
 
   return (
-    <Card>
+    <Card className="rounded-lg shadow-card" role="region" aria-label="Discussion thread">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between">
           <span className="flex items-center gap-2 text-base">
-            <MessageSquare className="h-4 w-4" />
+            <MessageSquare className="h-4 w-4" aria-hidden="true" />
             Discussion
           </span>
           <Badge variant="secondary" className="text-xs font-normal">
@@ -61,14 +60,19 @@ export function CommentThread({ comments, currentUserName }: CommentThreadProps)
       </CardHeader>
       <CardContent className="space-y-1 pt-0">
         {comments.length === 0 ? (
-          <EmptyState
-            icon={<MessageSquare className="h-6 w-6" />}
-            title="No comments yet"
-            description="Start the conversation by posting a comment below."
-            className="py-8"
-          />
+          <div className="rounded-lg border border-dashed border-border bg-muted/20 py-10 px-6">
+            <div className="flex flex-col items-center justify-center text-center">
+              <div className="mb-4 rounded-full bg-muted p-4">
+                <MessageSquare className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
+              </div>
+              <h4 className="mb-1.5 text-base font-semibold text-foreground">No comments yet</h4>
+              <p className="max-w-xs text-sm text-muted-foreground leading-relaxed">
+                Start the conversation by posting a comment below. Mention team members with @name.
+              </p>
+            </div>
+          </div>
         ) : (
-          <div className="space-y-4 max-h-[500px] overflow-y-auto pr-1">
+          <div className="space-y-4 max-h-[500px] overflow-y-auto pr-1" role="list" aria-label="Comments">
             {comments.map((comment, index) => {
               const role = roleLabels[comment.userRole]
               return (
@@ -76,6 +80,7 @@ export function CommentThread({ comments, currentUserName }: CommentThreadProps)
                   key={comment.id}
                   className="flex gap-3 animate-fade-in"
                   style={{ animationDelay: `${index * 50}ms` }}
+                  role="listitem"
                 >
                   <Avatar name={comment.userName} size="sm" className="mt-0.5 shrink-0" />
                   <div className="flex-1 min-w-0">
@@ -99,16 +104,19 @@ export function CommentThread({ comments, currentUserName }: CommentThreadProps)
                         )}
                       </p>
                       {comment.attachments && comment.attachments.length > 0 && (
-                        <div className="mt-2 space-y-1">
+                        <div className="mt-2 space-y-1" role="list" aria-label="Attachments">
                           {comment.attachments.map((att) => (
-                            <div
+                            <button
                               key={att.name}
-                              className="inline-flex items-center gap-2 rounded-md bg-background border border-border px-2.5 py-1.5 text-xs hover:bg-accent transition-colors cursor-pointer group"
+                              type="button"
+                              className="inline-flex items-center gap-2 rounded-lg bg-background border border-border px-2.5 py-1.5 text-xs hover:bg-accent transition-colors cursor-pointer group"
+                              aria-label={`Download attachment: ${att.name}`}
+                              role="listitem"
                             >
-                              <FileText className="h-3.5 w-3.5 text-muted-foreground" />
+                              <FileText className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
                               <span className="font-medium">{att.name}</span>
-                              <Download className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </div>
+                              <Download className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
+                            </button>
                           ))}
                         </div>
                       )}
@@ -129,14 +137,25 @@ export function CommentThread({ comments, currentUserName }: CommentThreadProps)
               onChange={(e) => setNewComment(e.target.value)}
               onKeyDown={handleKeyDown}
               className="min-h-[72px] text-sm"
+              aria-label="Write a comment"
             />
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1">
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                  <Paperclip className="h-4 w-4" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                  aria-label="Attach a file"
+                >
+                  <Paperclip className="h-4 w-4" aria-hidden="true" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                  <AtSign className="h-4 w-4" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                  aria-label="Mention a team member"
+                >
+                  <AtSign className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </div>
               <Button
@@ -145,8 +164,9 @@ export function CommentThread({ comments, currentUserName }: CommentThreadProps)
                 disabled={!newComment.trim()}
                 isLoading={isSubmitting}
                 className="gap-1.5"
+                aria-label="Post comment"
               >
-                <Send className="h-3.5 w-3.5" /> Post
+                <Send className="h-3.5 w-3.5" aria-hidden="true" /> Post
               </Button>
             </div>
           </div>
