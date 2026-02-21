@@ -1,7 +1,14 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { Avatar } from '@/components/ui/avatar'
-import { DropdownMenu, DropdownItem, DropdownSeparator } from '@/components/ui/dropdown-menu'
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from '@/components/ui/dropdown-menu'
 import { users } from '@/data/mock-data'
 import {
   Building2, ClipboardCheck, MessageSquare, Calendar, Download,
@@ -63,25 +70,31 @@ export function ClientPortalLayout() {
               <Bell className="h-5 w-5" />
               <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">2</span>
             </button>
-            <DropdownMenu
-              trigger={
-                <button className="flex items-center gap-2 rounded-lg p-1.5 hover:bg-accent transition-colors">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  aria-label="User menu"
+                  className="flex items-center gap-2 rounded-lg p-1.5 hover:bg-accent transition-colors"
+                >
                   <Avatar name={clientUser.name} size="sm" />
                 </button>
-              }
-            >
-              <div className="px-3 py-2">
-                <p className="text-sm font-medium">{clientUser.name}</p>
-                <p className="text-xs text-muted-foreground">{clientUser.email}</p>
-              </div>
-              <DropdownSeparator />
-              <DropdownItem onClick={() => navigate('/client/profile')}>
-                <User className="h-4 w-4" /> Profile
-              </DropdownItem>
-              <DropdownSeparator />
-              <DropdownItem onClick={() => navigate('/login')} destructive>
-                <LogOut className="h-4 w-4" /> Sign out
-              </DropdownItem>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium">{clientUser.name}</p>
+                    <p className="text-xs text-muted-foreground">{clientUser.email}</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => navigate('/client/profile')}>
+                  <User className="h-4 w-4" /> Profile
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => navigate('/login')} destructive>
+                  <LogOut className="h-4 w-4" /> Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </div>

@@ -2,7 +2,14 @@ import { useState } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { Avatar } from '@/components/ui/avatar'
-import { DropdownMenu, DropdownItem, DropdownSeparator } from '@/components/ui/dropdown-menu'
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from '@/components/ui/dropdown-menu'
 import { Tooltip } from '@/components/ui/tooltip'
 import { currentUser, notifications } from '@/data/mock-data'
 import {
@@ -171,9 +178,12 @@ export function DashboardLayout() {
           </div>
 
           <div className="flex items-center gap-2">
-            <DropdownMenu
-              trigger={
-                <button className="relative rounded-lg p-2 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
+                  className="relative rounded-lg p-2 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+                >
                   <Bell className="h-5 w-5" />
                   {unreadCount > 0 && (
                     <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
@@ -181,49 +191,53 @@ export function DashboardLayout() {
                     </span>
                   )}
                 </button>
-              }
-              className="w-80"
-            >
-              <div className="px-3 py-2">
-                <h3 className="text-sm font-semibold">Notifications</h3>
-              </div>
-              <DropdownSeparator />
-              {notifications.slice(0, 4).map((n) => (
-                <DropdownItem key={n.id} onClick={() => n.link && navigate(n.link)}>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium">{n.title}</p>
-                      {!n.read && <span className="h-2 w-2 rounded-full bg-primary" />}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80">
+                <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {notifications.slice(0, 4).map((n) => (
+                  <DropdownMenuItem key={n.id} onSelect={() => n.link && navigate(n.link)}>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium">{n.title}</p>
+                        {!n.read && <span className="h-2 w-2 rounded-full bg-primary" />}
+                      </div>
+                      <p className="text-xs text-muted-foreground">{n.message}</p>
                     </div>
-                    <p className="text-xs text-muted-foreground">{n.message}</p>
-                  </div>
-                </DropdownItem>
-              ))}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
             </DropdownMenu>
 
-            <DropdownMenu
-              trigger={
-                <button className="flex items-center gap-2 rounded-lg p-1.5 hover:bg-accent transition-colors">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  aria-label="User menu"
+                  className="flex items-center gap-2 rounded-lg p-1.5 hover:bg-accent transition-colors"
+                >
                   <Avatar name={currentUser.name} size="sm" />
                   <span className="hidden text-sm font-medium md:block">{currentUser.name}</span>
                 </button>
-              }
-            >
-              <div className="px-3 py-2">
-                <p className="text-sm font-medium">{currentUser.name}</p>
-                <p className="text-xs text-muted-foreground">{currentUser.email}</p>
-              </div>
-              <DropdownSeparator />
-              <DropdownItem onClick={() => navigate('/dashboard/profile')}>
-                <User className="h-4 w-4" /> Profile
-              </DropdownItem>
-              <DropdownItem onClick={() => navigate('/dashboard/settings')}>
-                <Settings className="h-4 w-4" /> Settings
-              </DropdownItem>
-              <DropdownSeparator />
-              <DropdownItem onClick={() => navigate('/login')} destructive>
-                <LogOut className="h-4 w-4" /> Sign out
-              </DropdownItem>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium">{currentUser.name}</p>
+                    <p className="text-xs text-muted-foreground">{currentUser.email}</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => navigate('/dashboard/profile')}>
+                  <User className="h-4 w-4" /> Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => navigate('/dashboard/settings')}>
+                  <Settings className="h-4 w-4" /> Settings
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => navigate('/login')} destructive>
+                  <LogOut className="h-4 w-4" /> Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </header>
