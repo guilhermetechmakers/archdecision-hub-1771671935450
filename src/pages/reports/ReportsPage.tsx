@@ -108,6 +108,8 @@ export function ReportsPage() {
         </div>
         <div className="flex gap-3">
           <Select
+            label="Time range"
+            hideLabel
             options={[
               { value: '1m', label: 'Last Month' },
               { value: '3m', label: 'Last 3 Months' },
